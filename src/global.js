@@ -1,8 +1,8 @@
 const GLOBAL = (function(){
     /* Global Variable */
     let isGitHubPage = true;
-    let canvas = document.getElementById('myCanvas');
-    let renderContext = canvas.getContext('2d');
+    const canvas = document.getElementById('myCanvas');
+    const renderContext = canvas.getContext('2d');
     return {
         FPS : 60,
         canvas : canvas,
