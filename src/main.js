@@ -1,12 +1,15 @@
 document.addEventListener('DOMContentLoaded',function(){
-    var foo = new UILayer();
-    let p;
-    var test = function(){
-        class dummy{
-            constructor(){this.a = 0;}
-            ddd(){}
-        }
-        p = new dummy();
-        return 0;
-    }();
+    var backGroundLayer = new BACKGROUD.BackGround();
+    var interactLayer = new INTERACT.InteractLayer();
+    var UILayer = new UI.UILayer();
+
+    main();
+
+    function main(){
+        requestAnimationFrame(main);
+        backGroundLayer.process();
+        interactLayer.process();
+        UILayer.process();
+    }
+
 },false);
