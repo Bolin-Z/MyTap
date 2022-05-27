@@ -1,21 +1,18 @@
-const GLOBAL = (function(){
-    /* Global Variable */
-    let isGitHubPage = true;
-    const canvas = document.getElementById('myCanvas');
-    const renderContext = canvas.getContext('2d');
-    return {
-        FPS : 60,
-        canvas : canvas,
-        renderContext : renderContext,
-        backTrackURL : (isGitHubPage) ?
+class GLOBALMODULE {
+    constructor(isGitHubPage){
+        /* Global Variable */
+        this.canvas = document.getElementById('canvas');
+        this.renderContext = this.canvas.getContext('2d');
+        this.FPS = 60;
+        this.backTrackURL = (isGitHubPage) ?
             " " :
-            " " ,
-        backTrackOn : false,
-        feedBackURLs : (isGitHubPage) ? [
+            " " ;
+        this.backTrackOn = false;
+        this.feedBackURLs = (isGitHubPage) ? [
 
-        ] : [
+        ] : {
 
-        ],
-        feedBackOn : false
-    };
-})();
+        } ;
+        this.feedBackOn = false;
+    }
+}
