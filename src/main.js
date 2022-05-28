@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
         if(activecounter === 0){
             ShapesLayer.active();
-            activecounter = Math.ceil(Math.random() * 4 * GLOBAL.FPS);
+            activecounter = Math.ceil(Math.random() * GLOBAL.FPS);
         }else{
              activecounter--;
         }
