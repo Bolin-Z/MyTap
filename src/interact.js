@@ -64,6 +64,7 @@ class INTERACTMODULE {
                 for(let y = 0;y < canvas.height;y += blockHeight){
                     for(let x = 0;x < canvas.width;x += blockWidth){
                         this.#blocks[i].resizeBlock(x, y, blockWidth, blockHeight);
+                        i++;
                     }
                 }
             }

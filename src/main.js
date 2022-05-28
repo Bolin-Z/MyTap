@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded',function(){
     
     const GLOBAL = new GLOBALMODULE(true);
-    const loadBACKGROUNDMODULE = new BACKGROUDMODULE(
+    const loadBACKGROUNDMODULE = new BACKGROUNDMODULE(
         GLOBAL.canvas,
         GLOBAL.renderContext,
         GLOBAL.FPS
@@ -29,13 +29,35 @@ document.addEventListener('DOMContentLoaded',function(){
         UILayer.windowResizeHandler();
     },false);
 
+    var counter = 180;
+    var activecounter = 20;
+    var activeID = 0;
+
     main();
 
     function main(){
         requestAnimationFrame(main);
+        UpdateLogic();
         BackGroundLayer.process();
         InteractLayer.process();
         UILayer.process();
+    }
+
+    function UpdateLogic(){
+        if(counter === 0){
+            BackGroundLayer.switchBackGround();
+            counter = 180;
+        }else{
+            counter--;
+        }
+
+        if(activecounter === 0){
+            InteractLayer.active(activeID);
+            activeID = (activeID + 1) % 32;
+            activecounter = 20;
+        }else{
+            activecounter--;
+        }
     }
 
 },false);
