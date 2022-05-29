@@ -1,23 +1,94 @@
 class SHAPEMODULE {
-    constructor(canvas, ctx, FPS){
+    constructor(canvas, ctx, FPS) {
         /* const value */
-        
+        const DIRECTION = [
+            'l2r', 'r2l', 'u2d', 'd2u'
+        ];
+
         /* auxiliary function */
-        function randomInRange(l,r){
+        function randomInRange(l,r) {
             return (r > l) ? l + Math.floor(Math.random() * (r - l)) : undefined;
         }
 
-        function randomColor(){
+        function randomColor() {
             return 'rgb(' + randomInRange(0,256) + ',' + randomInRange(0,256) + ',' + randomInRange(0,256) + ')';
         }
 
-        class randomCircles {
-            #circle; 
+        function setInRange(x,l,r){
+            if(x < l) x = l;
+            if(x > r) x = r;
+            return (l <= r) ? x : undefined;
+        }
+
+        class AnimationInterface {
+            #basicAnimation;
             #activeAnimation = [];
-            constructor(){
-                this.#circle = class randomCircleAnimation{
+            constructor(basicAnimation){
+                this.#basicAnimation = basicAnimation;
+            }
+            active(){
+                this.#activeAnimation.push(new this.#basicAnimation());
+            }
+        
+            process(){
+                if(this.#activeAnimation.length !== 0){
+                    this.#activeAnimation.forEach((basicAnimation)=>{
+                        basicAnimation.process();
+                    });
+                    for(let i = this.#activeAnimation.length;i > 0;i--){
+                        if(this.#activeAnimation[0].isFinish()){
+                            this.#activeAnimation.shift();
+                        }
+                    }
+                }
+            }
+        }
+
+        class BasicAnimationInterface {
+            ElementaryAnimationClass;
+            ElementaryAnimationContainer = [];
+            #finish;
+            constructor(){this.#finish = false;}
+            process(){
+                this.#finish = true;
+                this.ElementaryAnimationContainer.forEach((e)=>{
+                    e.process();
+                    if(!e.isFinish()){
+                        this.#finish = false;
+                    }
+                });
+            }
+            isFinish(){ return this.#finish;}
+            defineElementaryAnimation(){console.log('ElementaryAnimationClass is not defined');}
+        }
+
+        class ElementaryAnimationInterface {
+            constructor(){}
+            process(){console.log('Method process is not defined!');}
+            isFinish(){console.log('Method isFinish is not defined!');}
+            render(){console.log('Method rendor is not defined');}
+        }
+
+        /* Definition of Interact Animation */
+
+        class RandomCircle extends BasicAnimationInterface {
+            constructor() {
+                super();
+                this.defineElementaryAnimation();
+
+                /* Generate Animation */
+                let circleNumber = randomInRange(5,16);
+                for(let i = 0;i < circleNumber;i++) {
+                    this.ElementaryAnimationContainer.push(new this.ElementaryAnimationClass());
+                }
+            }
+
+            defineElementaryAnimation() {
+                this.ElementaryAnimationClass = class extends ElementaryAnimationInterface {
                     #counter; #cx; #cy; #rmax; #r; #spanvr; #shrinkvr; #color;
-                    constructor(){
+                    constructor() {
+                        super();
+
                         this.#counter = FPS;
                         this.#cx = Math.round((randomInRange(10,91) / 100) * canvas.width);
                         this.#cy = Math.round((randomInRange(10,91) / 100) * canvas.height);
@@ -27,26 +98,23 @@ class SHAPEMODULE {
                         this.#spanvr = Math.ceil((this.#rmax - this.#r) / (FPS / 4));
                         this.#shrinkvr = Math.ceil((this.#rmax) / (FPS / 4));
                     }
-                    
-                    process(){
-                        if(this.#counter > 0){
-                            if(this.#counter >= ((FPS * 3) / 4)){
+
+                    process() {
+                        if(this.#counter > 0) {
+                            if(this.#counter >= ((FPS * 3) / 4)) {
                                 this.#r += this.#spanvr;
                                 this.#r = (this.#r > this.#rmax) ? this.#rmax : this.#r;
-                            } else if(this.#counter <= ((FPS) / 4)){
+                            } else if(this.#counter <= ((FPS) / 4)) {
                                 this.#r -= this.#shrinkvr;
                                 this.#r = (this.#r < 0) ? 0 : this.#r;
                             }
                             this.#counter--;
-                            this.#render();
+                            this.render();
                         }
                     }
+                    isFinish() { return (this.#counter === 0); }
 
-                    isFinish(){
-                        return (this.#counter === 0)
-                    }
-
-                    #render(){
+                    render() {
                         ctx.save();
                         ctx.fillStyle = this.#color;
                         ctx.beginPath();
@@ -56,49 +124,23 @@ class SHAPEMODULE {
                     }
                 }
             }
-
-            active(){
-                let circleNumber = randomInRange(5,16);
-                let newAnimation = [];
-                for(let i = 0;i < circleNumber;i++){
-                    newAnimation.push(new this.#circle());
-                }
-                this.#activeAnimation.push({
-                    circlesAnimation : newAnimation,
-                    finish : false
-                });
-            }
-
-            process(){
-                if(this.#activeAnimation.length !== 0){
-                    this.#activeAnimation.forEach((e)=>{
-                        let finish = true;
-                        e.circlesAnimation.forEach((x)=>{
-                            x.process();
-                            if(!x.isFinish()){
-                                finish = false;
-                            }
-                        })
-                        e.finish = finish;
-                    });
-                    let i = this.#activeAnimation.length;
-                    while(i){
-                        if(this.#activeAnimation[0].finish){
-                            this.#activeAnimation.shift();
-                        }
-                        i--;
-                    }
-                }
-            }
         }
 
-        class middleCircle{
-            #basicAnimation; 
-            #activeAnimation = [];
-            constructor(){
-                this.#basicAnimation = class basicMiddleCircle {''
+        class MiddleCircle extends BasicAnimationInterface {
+            constructor() {
+                super();
+                this.defineElementaryAnimation();
+
+                /* Generate Animation */
+                this.ElementaryAnimationContainer.push(new this.ElementaryAnimationClass());
+            }
+
+            defineElementaryAnimation() {
+                this.ElementaryAnimationClass = class extends ElementaryAnimationInterface {
                     #counter; #cx; #cy; #r; #color; #v; #initAngle; #curAngle; #anticlockwise;
-                    constructor(){
+                    constructor() {
+                        super();
+                        
                         this.#counter = FPS;
                         this.#cx = Math.round(canvas.width / 2);
                         this.#cy = Math.round(canvas.height / 2);
@@ -113,26 +155,24 @@ class SHAPEMODULE {
                         this.#curAngle = this.#curAngle * (Math.PI / 180);
                     }
 
-                    process(){
+                    process() {
                         if(this.#counter > 0){
                             this.#curAngle += this.#v;
                             if(this.#curAngle > 2 * Math.PI){
                                 this.#curAngle = 2 * Math.PI;
                             }
                             this.#counter--;
-                            this.#render();
+                            this.render();
                         }
                     }
 
-                    isFinish(){
-                        return (this.#counter === 0);
-                    }
+                    isFinish() { return (this.#counter === 0); }
 
-                    #render(){
+                    render() {
                         ctx.save();
                         ctx.fillStyle = this.#color;
                         ctx.beginPath();
-                        if(this.#curAngle === 2 * Math.PI){
+                        if(this.#curAngle === 2 * Math.PI) {
                             ctx.arc(this.#cx,this.#cy,this.#r,0,this.#curAngle,true);
                         } else {
                             let endAngle = (this.#anticlockwise) ? (this.#initAngle - this.#curAngle) : (this.#initAngle + this.#curAngle);
@@ -144,257 +184,161 @@ class SHAPEMODULE {
                     }
                 }
             }
-
-            active(){
-                this.#activeAnimation.push(new this.#basicAnimation());
-            }
-
-            process(){
-                if(this.#activeAnimation.length !== 0){
-                    this.#activeAnimation.forEach((e)=>{
-                        e.process();
-                    });
-                    let i = this.#activeAnimation.length;
-                    while(i){
-                        if(this.#activeAnimation[0].isFinish()){
-                            this.#activeAnimation.shift();
-                        }
-                        i--;
-                    }
-                }
-            }
         }
 
-        class strips{
-            #basicAnimation;
-            #activeAnimation = [];
-            constructor(){
-                this.#basicAnimation = class basicAnimation {
-                    #singleStrip;
-                    #finish;
-                    #stripsContainer=[];
-                    #direction = ['l2r', 'r2l', 'u2d', 'd2u'];
-                    constructor(){
-                        this.#singleStrip = class singleStrip {
-                            #counter;
-                            #lx; #rx; #uy; #dy; #maxWidth; #maxHeight; 
-                            #direction; #color; #v;
-                            constructor(x,y,maxWidth,maxHeight,direction,color){
-                                this.#counter = FPS;
+        class Strips extends BasicAnimationInterface {
+            constructor() {
+                super();
+                this.defineElementaryAnimation();
 
-                                this.#maxWidth = maxWidth; this.#maxHeight = maxHeight;
-                                this.#direction = direction; this.#color = color;
-                                /* Math.ceil(100 / (FPS / 2)) = 4*/
-                                this.#v = randomInRange(4, 11);
-                                switch(this.#direction){
-                                    case 'l2r' : {
-                                        this.#lx = x; 
-                                        this.#uy = y;
-                                        this.#rx = x;
-                                        this.#dy = y + this.#maxHeight;
-                                        this.#v = Math.round((this.#v / 100) * this.#maxWidth);
-                                        break;
-                                    }
-                                    case 'r2l' : {
-                                        this.#lx = x + this.#maxWidth; 
-                                        this.#uy = y;
-                                        this.#rx = x + this.#maxWidth;
-                                        this.#dy = y + this.#maxHeight;
-                                        this.#v = Math.round((this.#v / 100) * this.#maxWidth);
-                                        break;
-                                    }
-                                    case 'u2d' : {
-                                        this.#lx = x; 
-                                        this.#uy = y;
-                                        this.#rx = x + this.#maxWidth;
-                                        this.#dy = y
-                                        this.#v = Math.round((this.#v / 100) * this.#maxHeight);
-                                        break;
-                                    }
-                                    case 'd2u' : {
-                                        this.#lx = x; 
-                                        this.#uy = y + this.#maxHeight;
-                                        this.#rx = x + this.#maxWidth;
-                                        this.#dy = y + this.#maxHeight;
-                                        this.#v = Math.round((this.#v / 100) * this.#maxHeight);
-                                        break;
-                                    }
-                                }
-                            }
+                /* Generate Animation */
+                let containerSize = Math.round((randomInRange(20,61) / 100) * Math.min(canvas.height,canvas.width));
+                let containerX = Math.round((canvas.width - containerSize) / 2);
+                let containerY = Math.round((canvas.height - containerSize) / 2);
 
-                            process(){
-                                if(this.#counter > 0){
-                                    switch(this.#direction){
-                                        case 'l2r' : {
-                                            if(this.#counter > (FPS / 2)){
-                                                this.#rx += this.#v;
-                                                if((this.#rx - this.#lx) > this.#maxWidth){
-                                                    this.#rx = this.#lx + this.#maxWidth;
-                                                }
-                                            }else{
-                                                this.#lx += this.#v;
-                                                if(this.#lx > this.#rx){
-                                                    this.#lx = this.#rx;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                        case 'r2l' : {
-                                            if(this.#counter > (FPS / 2)){
-                                                this.#lx -= this.#v;
-                                                if((this.#rx - this.#lx) > this.#maxWidth){
-                                                    this.#lx = this.#rx - this.#maxWidth;
-                                                }
-                                            }else{
-                                                this.#rx -= this.#v;
-                                                if(this.#lx > this.#rx){
-                                                    this.#rx = this.#lx;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                        case 'u2d' : {
-                                            if(this.#counter > (FPS / 2)){
-                                                this.#dy += this.#v;
-                                                if((this.#dy - this.#uy) > this.#maxHeight){
-                                                    this.#dy = this.#uy + this.#maxHeight;
-                                                }
-                                            }else{
-                                                this.#uy += this.#v;
-                                                if(this.#uy > this.#dy){
-                                                    this.#uy = this.#dy;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                        case 'd2u' : {
-                                            if(this.#counter > (FPS / 2)){
-                                                this.#uy -= this.#v;
-                                                if((this.#dy - this.#uy) > this.#maxHeight){
-                                                    this.#uy = this.#dy - this.#maxHeight;
-                                                }
-                                            }else{
-                                                this.#dy -= this.#v;
-                                                if(this.#uy > this.#dy){
-                                                    this.#dy = this.#uy
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    this.#counter--;
-                                    this.#render();
-                                }
-                            }
+                let dir = DIRECTION[randomInRange(0,DIRECTION.length)];
+                let color = randomColor();
 
-                            isFinish(){ return (this.#counter === 0);}
+                let stripsNumber = randomInRange(3,11);
+                let stripsFirst = (randomInRange(0,2) === 0);
+                let gapSize = (stripsFirst) ? 
+                    Math.round(containerSize / (2 * stripsNumber - 1)) :
+                    Math.round(containerSize / (2 * stripsNumber + 1)) ;
 
-                            #render(){
-                                ctx.save();
-                                ctx.fillStyle = this.#color;
-                                ctx.beginPath()
-                                ctx.moveTo(this.#lx,this.#uy);
-                                ctx.lineTo(this.#rx,this.#uy);
-                                ctx.lineTo(this.#rx,this.#dy);
-                                ctx.lineTo(this.#lx,this.#dy);
-                                ctx.fill();
-                                ctx.restore();
-                            }
+                switch(dir) {
+                    case 'l2r' :
+                    case 'r2l' : {
+                        let offsetY = (stripsFirst) ? 0 : gapSize;
+                        for(let i = 0;i < stripsNumber;i++){
+                            this.ElementaryAnimationContainer.push(new this.ElementaryAnimationClass(
+                                containerX,
+                                containerY + offsetY,
+                                containerSize,
+                                gapSize,
+                                dir,
+                                color
+                            ));
+                            offsetY += (gapSize + gapSize);
                         }
-
-                        this.#finish = false;
-
-                        let containerSize = Math.round((randomInRange(20,51) / 100) * Math.min(canvas.height,canvas.width));
-                        let containerX = Math.round((canvas.width - containerSize) / 2);
-                        let containerY = Math.round((canvas.height - containerSize) / 2);
-                        
-                        let dir = this.#direction[randomInRange(0,this.#direction.length)];
-                        let color = randomColor();
-                        
-                        let stripsNumber = randomInRange(4,11);
-                        let gapSize = Math.round(containerSize / (2 * stripsNumber - 1));
-
-                        switch(dir){
-                            case 'l2r' : 
-                            case 'r2l' : {
-                                let offsetY = 0;
-                                for(let i = 0;i < stripsNumber;i++){
-                                    this.#stripsContainer.push(new this.#singleStrip(
-                                        containerX,
-                                        containerY + offsetY,
-                                        containerSize,
-                                        gapSize,
-                                        dir,
-                                        color
-                                    ));
-                                    offsetY += (gapSize + gapSize);
-                                }
-                            } break;
-                            case 'u2d' : 
-                            case 'd2u' : {
-                                let offsetX = 0;
-                                for(let i = 0;i < stripsNumber;i++){
-                                    this.#stripsContainer.push(new this.#singleStrip(
-                                        containerX + offsetX,
-                                        containerY,
-                                        gapSize,
-                                        containerSize,
-                                        dir,
-                                        color
-                                    ));
-                                    offsetX += (gapSize + gapSize);
-                                }
-                            } break;
+                    } break;
+                    case 'u2d' :
+                    case 'd2u' : {
+                        let offsetX = (stripsFirst) ? 0 : gapSize;
+                        for(let i = 0;i < stripsNumber;i++){
+                            this.ElementaryAnimationContainer.push(new this.ElementaryAnimationClass(
+                                containerX + offsetX,
+                                containerY,
+                                gapSize,
+                                containerSize,
+                                dir,
+                                color
+                            ));
+                            offsetX += (gapSize + gapSize);
                         }
-                    }
-
-                    process(){
-                        this.#finish = true;
-                        this.#stripsContainer.forEach((e)=>{
-                            e.process();
-                            if(!e.isFinish()){
-                                this.#finish = false;
-                            }
-                        });
-                    }
-
-                    isFinish(){ return this.#finish; }
+                    } break;
                 }
             }
 
-            active(){
-                this.#activeAnimation.push(new this.#basicAnimation());
-            }
+            defineElementaryAnimation() {
+                this.ElementaryAnimationClass = class extends ElementaryAnimationInterface {
+                    #counter; #lx; #rx; #uy; #dy; #maxWidth; #maxHeight; #direction; #color; #v;
+                    constructor(x,y,maxWidth,maxHeight,direction,color){
+                        super();
 
-            process(){
-                if(this.#activeAnimation.length !== 0){
-                    this.#activeAnimation.forEach((e)=>{
-                        e.process();
-                    });
-                    let i = this.#activeAnimation.length;
-                    while(i){
-                        if(this.#activeAnimation[0].isFinish()){
-                            this.#activeAnimation.shift();
+                        this.#counter = FPS;
+                        this.#maxWidth = maxWidth; this.#maxHeight = maxHeight;
+                        this.#direction = direction; this.#color = color;
+
+                        /* Math.ceil(100 / (FPS / 2)) = 4*/
+                        this.#v = randomInRange(4, 11);
+                        switch(this.#direction) {
+                            case 'l2r' : {
+                                this.#lx = x; this.#rx = x;
+                                this.#uy = y; this.#dy = y + this.#maxHeight;
+                                this.#v = Math.round((this.#v / 100) * this.#maxWidth);
+                            } break;
+                            case 'r2l' : {
+                                this.#lx = x + this.#maxWidth; this.#rx = x + this.#maxWidth;
+                                this.#uy = y; this.#dy = y + this.#maxHeight;
+                                this.#v = Math.round((this.#v / 100) * this.#maxWidth);
+                            } break;
+                            case 'u2d' : {
+                                this.#lx = x; this.#rx = x + this.#maxWidth;
+                                this.#uy = y; this.#dy = y;
+                                this.#v = Math.round((this.#v / 100) * this.#maxHeight);
+                            } break;
+                            case 'd2u' : {
+                                this.#lx = x; this.#rx = x + this.#maxWidth;
+                                this.#uy = y + this.#maxHeight; this.#dy = y + this.#maxHeight;
+                                this.#v = Math.round((this.#v / 100) * this.#maxHeight);
+                            } break;
                         }
-                        i--;
+                    }
+
+                    process() {
+                        if(this.#counter > 0){
+                            switch(this.#direction){
+                                case 'l2r' : {
+                                    if(this.#counter > (FPS / 2)) {
+                                        this.#rx = setInRange(this.#rx + this.#v, this.#rx, this.#lx + this.#maxWidth);
+                                    } else {
+                                        this.#lx = setInRange(this.#lx + this.#v, this.#lx, this.#rx);
+                                    }
+                                } break;
+                                case 'r2l' : {
+                                    if(this.#counter > (FPS / 2)) {
+                                        this.#lx = setInRange(this.#lx - this.#v, this.#rx - this.#maxWidth, this.#lx);
+                                    } else {
+                                        this.#rx = setInRange(this.#rx - this.#v, this.#lx, this.#rx);
+                                    }
+                                } break;
+                                case 'u2d' : {
+                                    if(this.#counter > (FPS / 2)) {
+                                        this.#dy = setInRange(this.#dy + this.#v, this.#dy, this.#uy + this.#maxHeight);
+                                    } else {
+                                        this.#uy = setInRange(this.#uy + this.#v, this.#uy, this.#dy);
+                                    }
+                                } break;
+                                case 'd2u' : {
+                                    if(this.#counter > (FPS / 2)) {
+                                        this.#uy = setInRange(this.#uy - this.#v, this.#dy - this.#maxHeight, this.#uy);
+                                    } else {
+                                        this.#dy = setInRange(this.#dy - this.#v, this.#uy, this.#dy);
+                                    }
+                                } break;
+                            }
+                            this.#counter--;
+                            this.render();
+                        }
+                    }
+
+                    isFinish() { return (this.#counter === 0);}
+
+                    render() {
+                        ctx.save();
+                        ctx.fillStyle = this.#color;
+                        ctx.beginPath()
+                        ctx.moveTo(this.#lx,this.#uy);
+                        ctx.lineTo(this.#rx,this.#uy);
+                        ctx.lineTo(this.#rx,this.#dy);
+                        ctx.lineTo(this.#lx,this.#dy);
+                        ctx.fill();
+                        ctx.restore();
                     }
                 }
             }
         }
 
         class Shapes {
-            /* Public Property */
-            /* Private Property */
             #shapeAnimation = [];
             constructor(){
-                this.#shapeAnimation.push(new randomCircles());
-                this.#shapeAnimation.push(new middleCircle());
-                this.#shapeAnimation.push(new strips());
+                this.#shapeAnimation.push(new AnimationInterface(RandomCircle));
+                this.#shapeAnimation.push(new AnimationInterface(MiddleCircle));
+                this.#shapeAnimation.push(new AnimationInterface(Strips));
             }
-            /* Public Method */
+
             active(){
                 let s = randomInRange(0,this.#shapeAnimation.length);
-                s = 2;
                 this.#shapeAnimation[s].active();
             }
 
@@ -403,7 +347,6 @@ class SHAPEMODULE {
                     e.process();
                 });
             }
-            /* Private Method */
         }
 
         this.Shapes = Shapes;
