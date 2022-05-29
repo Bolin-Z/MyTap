@@ -10,8 +10,8 @@ class SHAPEMODULE {
             return (r > l) ? l + Math.floor(Math.random() * (r - l)) : undefined;
         }
 
-        function randomColor() {
-            return 'rgb(' + randomInRange(0,256) + ',' + randomInRange(0,256) + ',' + randomInRange(0,256) + ')';
+        function randomColor(alpha) {
+            return 'rgba(' + randomInRange(0,256) + ',' + randomInRange(0,256) + ',' + randomInRange(0,256) + ',' + alpha + ')' ;
         }
 
         function setInRange(x,l,r){
@@ -94,7 +94,7 @@ class SHAPEMODULE {
                         this.#cy = Math.round((randomInRange(10,91) / 100) * canvas.height);
                         this.#rmax = Math.round((randomInRange(5,11) / 100) * Math.min(canvas.width, canvas.height));
                         this.#r = randomInRange(0,this.#rmax);
-                        this.#color = randomColor();
+                        this.#color = randomColor(1);
                         this.#spanvr = Math.ceil((this.#rmax - this.#r) / (FPS / 4));
                         this.#shrinkvr = Math.ceil((this.#rmax) / (FPS / 4));
                     }
@@ -146,7 +146,7 @@ class SHAPEMODULE {
                         this.#cy = Math.round(canvas.height / 2);
                         this.#r = Math.round((randomInRange(10,36) / 100) * Math.min(canvas.width,canvas.height));
 
-                        this.#color = randomColor();
+                        this.#color = randomColor(1);
                         this.#anticlockwise = (randomInRange(0,2) === 0);
 
                         this.#initAngle = randomInRange(0,360) * (Math.PI / 180);
@@ -197,7 +197,7 @@ class SHAPEMODULE {
                 let containerY = Math.round((canvas.height - containerSize) / 2);
 
                 let dir = DIRECTION[randomInRange(0,DIRECTION.length)];
-                let color = randomColor();
+                let color = randomColor(1);
 
                 let stripsNumber = randomInRange(3,11);
                 let stripsFirst = (randomInRange(0,2) === 0);
@@ -329,12 +329,75 @@ class SHAPEMODULE {
             }
         }
 
+        class SpinSquare extends BasicAnimationInterface {
+            constructor() {
+                super();
+                this.defineElementaryAnimation();
+
+                /* Generate Animation */
+                this.ElementaryAnimationContainer.push(new this.ElementaryAnimationClass());
+            }
+
+            defineElementaryAnimation() {
+                this.ElementaryAnimationClass = class extends ElementaryAnimationInterface {
+                    #counter; #cx; #cy; #curSize; #maxSize; #sizeSpeed; #curAngle; #angleSpeed; #clockWise; #color; #lineWidth;
+                    constructor() {
+                        super();
+
+                        this.#counter = FPS;
+                        this.#cx = canvas.width / 2;
+                        this.#cy = canvas.height / 2;
+
+                        this.#color = randomColor(0.6);
+                        this.#lineWidth = randomInRange(10,26);
+
+                        this.#curSize = Math.round((randomInRange(1,21) / 100) * Math.min(canvas.width, canvas.height));
+                        this.#maxSize = Math.round((randomInRange(60,121) / 100) * Math.min(canvas.width, canvas.height));
+                        this.#sizeSpeed = Math.round((this.#maxSize - this.#curSize) / FPS);
+
+                        this.#curAngle = 0;
+                        this.#angleSpeed = (randomInRange(1,9) * Math.PI / 2) / FPS;
+                        this.#clockWise = (randomInRange(0,2) === 0);
+                    }
+
+                    process() {
+                        if(this.#counter > 0) {
+                            this.#curSize += this.#sizeSpeed;
+                            this.#curAngle = (this.#clockWise) ? (this.#curAngle + this.#angleSpeed) : (this.#curAngle - this.#angleSpeed);
+                            this.#counter--;
+                            this.render();
+                        }
+                    }
+
+                    isFinish() { return (this.#counter === 0);}
+
+                    render() {
+                        ctx.save();
+                        ctx.strokeStyle = this.#color;
+                        ctx.lineWidth = this.#lineWidth;
+                        ctx.translate(this.#cx,this.#cy);
+                        ctx.rotate(this.#curAngle);
+                        ctx.beginPath();
+                        let t = this.#curSize / 2;
+                        ctx.moveTo(-t,t);
+                        ctx.lineTo(t,t);
+                        ctx.lineTo(t,-t);
+                        ctx.lineTo(-t,-t);
+                        ctx.closePath();
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
         class Shapes {
             #shapeAnimation = [];
             constructor(){
                 this.#shapeAnimation.push(new AnimationInterface(RandomCircle));
                 this.#shapeAnimation.push(new AnimationInterface(MiddleCircle));
                 this.#shapeAnimation.push(new AnimationInterface(Strips));
+                this.#shapeAnimation.push(new AnimationInterface(SpinSquare));
             }
 
             active(){
