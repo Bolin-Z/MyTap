@@ -14,7 +14,8 @@ class IOMODULE {
         (function(){
             for(let i = 0;i < 32;i++){
                 BLOCKS.push({
-                    active : false
+                    mouseActive : false,
+                    keyBoardActive : false,
                 });
             }
         })();
@@ -57,12 +58,6 @@ class IOMODULE {
                             GLOBAL.backTrackOn = !(GLOBAL.backTrackOn);
                             break;
                         }
-                        case HIT['BLOCK'] : {
-                            if(UILayer.currentPage() !== 'EmptyPage'){
-                                UILayer.swapPage('EmptyPage');
-
-                            }
-                        }
                     }
                 }
             }
@@ -89,14 +84,14 @@ class IOMODULE {
                             } else {
                                 this.hit = HIT['BLOCK'];
                                 this.#lastHitBlock = this.#hitBlockID();
-                                BLOCKS[this.#lastHitBlock].active = true;
+                                BLOCKS[this.#lastHitBlock].mouseActive = true;
                             }
                             break;
                         }
                         case "EmptyPage" : {
                             this.hit = HIT['BLOCK'];
                             this.#lastHitBlock = this.#hitBlockID();
-                            BLOCKS[this.#lastHitBlock].active = true;
+                            BLOCKS[this.#lastHitBlock].mouseActive = true;
                             break;
                         }
                     }
@@ -111,7 +106,7 @@ class IOMODULE {
                     let t = this.#hitBlockID()
                     if(t !== this.#lastHitBlock){
                         this.#lastHitBlock = t;
-                        BLOCKS[this.#lastHitBlock].active = true;
+                        BLOCKS[this.#lastHitBlock].mouseActive = true;
                     }
                 }
             }
@@ -139,37 +134,84 @@ class IOMODULE {
         }
 
         class KeyBoard {
+            #keyBoard;
+            constructor() {
+                class key {
+                    isPressed; mapBlockID; 
+                    constructor(id) {
+                        this.isPressed = false;
+                        this.mapBlockID = id;
+                    }
+                } 
 
+                this.#keyBoard = {
+                    KeyQ : new key(0), KeyW : new key(1), KeyE : new key(2), KeyR : new key(3), 
+                    KeyT : new key(4), KeyY : new key(5), KeyU : new key(6), KeyI : new key(7),
+                    KeyO : new key(8), KeyP : new key(9), BracketLeft : new key(10),
+
+                    KeyA : new key(11), KeyS : new key(12), KeyD : new key(13), KeyF : new key(14),
+                    KeyG : new key(15), KeyH : new key(16), KeyJ : new key(17), KeyK : new key(18),
+                    KeyL : new key(19), Semicolon : new key(20), Quote : new key(21),
+
+                    KeyZ : new key(22), KeyX : new key(23), KeyC : new key(24), KeyV : new key(25),
+                    KeyB : new key(26), KeyN : new key(27), KeyM : new key(28), Comma : new key(29),
+                    Period : new key(30), Slash : new key(31)
+                }
+            }
+
+            keyDownHandler(event, UILayer) {
+                if((UILayer.currentPage() === 'ControlPanelPage') || (UILayer.currentPage() === 'EmptyPage')){
+                    if(this.#keyBoard.hasOwnProperty(event.code)){
+                        if(!this.#keyBoard[event.code].isPressed){
+                            this.#keyBoard[event.code].isPressed = true;
+                            BLOCKS[this.#keyBoard[event.code].mapBlockID].keyBoardActive = true;
+                        }
+                    }
+                }
+            }
+
+            keyUpHandler(event) {
+                if(this.#keyBoard.hasOwnProperty(event.code)){
+                    this.#keyBoard[event.code].isPressed = false;
+                }
+            }
         }
 
         class UserIo {
             Mouse;
-            #KeyBoard;
+            KeyBoard;
             #activeCount;
             constructor(){
                 this.Mouse = new Mouse();
-                this.#KeyBoard = new KeyBoard();
+                this.KeyBoard = new KeyBoard();
                 this.#activeCount = 0;
             }
 
             process(UILayer, InteractLayer, ShapesLayer, BackGroundLayer){
                 this.Mouse.process(UILayer);
-                let active = false;
-                BLOCKS.forEach((element, index)=>{
-                    if(element.active){
-                        active = true;
-                        element.active = false;
-                        InteractLayer.active(index);
+                let hasActive = false;
+
+                BLOCKS.forEach((element,index)=>{
+                    if(element.mouseActive || element.keyBoardActive){
+                        hasActive = true;
+                        if(element.mouseActive){
+                            InteractLayer.active(index);
+                        }
                         ShapesLayer.active(index);
                         this.#activeCount++;
                         if(this.#activeCount === 30){
                             BackGroundLayer.switchBackGround();
                             this.#activeCount = 0;
                         }
+                        element.mouseActive = false;
+                        element.keyBoardActive = false;
                     }
                 });
-                if((!active) && (UILayer.currentPage() === 'EmptyPage') && (!InteractLayer.hasActive())){
+
+                if((!hasActive) && (UILayer.currentPage() === 'EmptyPage') && (!InteractLayer.hasActive()) && (!ShapesLayer.hasActive())) {
                     UILayer.swapPage('ControlPanelPage');
+                } else if((hasActive) && (UILayer.currentPage() === 'ControlPanelPage')) {
+                    UILayer.swapPage('EmptyPage');
                 }
             }
         }

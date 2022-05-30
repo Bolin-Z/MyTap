@@ -42,6 +42,10 @@ class SHAPEMODULE {
                     }
                 }
             }
+
+            hasActive(){
+                return (this.#activeAnimation.length !== 0);
+            }
         }
 
         class BasicAnimationInterface {
@@ -409,6 +413,16 @@ class SHAPEMODULE {
                 this.#shapeAnimation.forEach((e)=>{
                     e.process();
                 });
+            }
+
+            hasActive(){
+                let hasActive = false;
+                for(let i = 0;i < this.#shapeAnimation.length;i++){
+                    if(this.#shapeAnimation[i].hasActive()){
+                        hasActive = true;
+                    }
+                }
+                return hasActive;
             }
         }
 

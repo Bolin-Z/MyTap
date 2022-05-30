@@ -32,12 +32,19 @@ document.addEventListener('DOMContentLoaded',function(){
         IOLayer.Mouse.mouseUpHandler();
     },false);
 
+    window.addEventListener('keydown',(e)=>{
+        IOLayer.KeyBoard.keyDownHandler(e,UILayer);
+    },false);
 
+    window.addEventListener('keyup',(e)=>{
+        IOLayer.KeyBoard.keyUpHandler(e);
+    },false);
 
     main();
 
     function main(){
         requestAnimationFrame(main);
+        
         IOLayer.process(UILayer,InteractLayer,ShapesLayer,BackGroundLayer);
 
         BackGroundLayer.process();
