@@ -1,16 +1,19 @@
 document.addEventListener('DOMContentLoaded',function(){
     
-    const GLOBAL = new GLOBALMODULE(true);
+    const GLOBAL = new GLOBALMODULE(false);
     const loadBACKGROUNDMODULE = new BACKGROUNDMODULE(GLOBAL);
     const loadSHAPEMODULE = new SHAPEMODULE(GLOBAL);
     const loadINTERACTMODULE = new INTERACTMODULE(GLOBAL);
     const loadUIMODULE = new UIMODULE(GLOBAL);
+    const loadAUDIOMODULE = new AUDIOMODULE(GLOBAL);
     const loadIOMODULE = new IOMODULE(GLOBAL);
+    
             
     const BackGroundLayer = new loadBACKGROUNDMODULE.BackGround();
     const ShapesLayer = new loadSHAPEMODULE.Shapes();
     const InteractLayer = new loadINTERACTMODULE.Interact();
     const UILayer = new loadUIMODULE.UI();
+    const AudioLayer = new loadAUDIOMODULE.audioLayer();
     const IOLayer = new loadIOMODULE.UserIo();
 
 
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded',function(){
     function main(){
         requestAnimationFrame(main);
         
-        IOLayer.process(UILayer,InteractLayer,ShapesLayer,BackGroundLayer);
+        IOLayer.process(UILayer,InteractLayer,ShapesLayer,BackGroundLayer,AudioLayer);
 
         BackGroundLayer.process();
         ShapesLayer.process();

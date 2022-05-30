@@ -31,19 +31,19 @@ class IOMODULE {
                 this.#lastHitBlock = -1;
             }
 
-            process(UILayer) {
+            process(UILayer,AudioLayer) {
                 if(this.hit !== HIT['NONE']){
                     switch(this.hit){
                         case HIT['STARTBUTTON'] : {
                             this.hit = HIT['NONE'];
-                            GLOBAL.backTrackOn = true;
+                            AudioLayer.loopBackTrack();
                             GLOBAL.feedBackOn = true;
                             UILayer.swapPage('ControlPanelPage');
                             break;
                         }
                         case HIT['GOBACKBUTTON'] : {
                             this.hit = HIT['NONE'];
-                            GLOBAL.backTrackOn = false;
+                            AudioLayer.stopBackTrack();
                             GLOBAL.feedBackOn = false;
                             UILayer.swapPage('StartPage');
                             break;
@@ -55,7 +55,11 @@ class IOMODULE {
                         }
                         case HIT['BACKTRACKBUTTON'] : {
                             this.hit = HIT['NONE'];
-                            GLOBAL.backTrackOn = !(GLOBAL.backTrackOn);
+                            if(GLOBAL.backTrackOn){
+                                AudioLayer.stopBackTrack();
+                            } else {
+                                AudioLayer.loopBackTrack();
+                            }
                             break;
                         }
                     }
@@ -187,8 +191,8 @@ class IOMODULE {
                 this.#activeCount = 0;
             }
 
-            process(UILayer, InteractLayer, ShapesLayer, BackGroundLayer){
-                this.Mouse.process(UILayer);
+            process(UILayer, InteractLayer, ShapesLayer, BackGroundLayer, AudioLayer){
+                this.Mouse.process(UILayer, AudioLayer);
                 let hasActive = false;
 
                 BLOCKS.forEach((element,index)=>{
@@ -205,6 +209,8 @@ class IOMODULE {
                         }
                         element.mouseActive = false;
                         element.keyBoardActive = false;
+
+                        AudioLayer.playFeedBack(index);
                     }
                 });
 

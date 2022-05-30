@@ -6,13 +6,15 @@ class GLOBALMODULE {
         this.FPS = 60;
         this.backTrackURL = (isGitHubPage) ?
             " " :
-            " " ;
+            "../sounds/backtrack.mp3" ;
         this.backTrackOn = false;
         this.feedBackURLs = (isGitHubPage) ? [
 
-        ] : {
-
-        } ;
+        ] : [
+            "../sounds/feedback.mp3",
+            "../sounds/shoot.mp3",
+            "../sounds/explosion.mp3"
+        ] ;
         this.feedBackOn = false;
     }
 }
