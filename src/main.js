@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded',function(){
     
-    const GLOBAL = new GLOBALMODULE(false);
+    const GLOBAL = new GLOBALMODULE(true);
     const loadBACKGROUNDMODULE = new BACKGROUNDMODULE(GLOBAL);
     const loadSHAPEMODULE = new SHAPEMODULE(GLOBAL);
     const loadINTERACTMODULE = new INTERACTMODULE(GLOBAL);
