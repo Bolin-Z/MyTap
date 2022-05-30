@@ -1,32 +1,17 @@
 document.addEventListener('DOMContentLoaded',function(){
     
     const GLOBAL = new GLOBALMODULE(true);
-    const loadBACKGROUNDMODULE = new BACKGROUNDMODULE(
-        GLOBAL.canvas,
-        GLOBAL.renderContext,
-        GLOBAL.FPS
-    );
-    const loadSHAPEMODULE = new SHAPEMODULE(
-        GLOBAL.canvas,
-        GLOBAL.renderContext,
-        GLOBAL.FPS
-    );
-    const loadINTERACTMODULE = new INTERACTMODULE(
-        GLOBAL.canvas,
-        GLOBAL.renderContext,
-        GLOBAL.FPS
-    );
-    const loadUIMODULE = new UIMODULE(
-        GLOBAL.canvas,
-        GLOBAL.renderContext,
-        GLOBAL.feedBackOn,
-        GLOBAL.backTrackOn
-    );
+    const loadBACKGROUNDMODULE = new BACKGROUNDMODULE(GLOBAL);
+    const loadSHAPEMODULE = new SHAPEMODULE(GLOBAL);
+    const loadINTERACTMODULE = new INTERACTMODULE(GLOBAL);
+    const loadUIMODULE = new UIMODULE(GLOBAL);
+    const loadIOMODULE = new IOMODULE(GLOBAL);
             
     const BackGroundLayer = new loadBACKGROUNDMODULE.BackGround();
     const ShapesLayer = new loadSHAPEMODULE.Shapes();
     const InteractLayer = new loadINTERACTMODULE.Interact();
     const UILayer = new loadUIMODULE.UI();
+    const IOLayer = new loadIOMODULE.UserIo();
 
 
     window.addEventListener('resize',function(){
@@ -34,35 +19,31 @@ document.addEventListener('DOMContentLoaded',function(){
         InteractLayer.windowResizeHandler();
         UILayer.windowResizeHandler();
     },false);
+    
+    GLOBAL.canvas.addEventListener('mousedown', (e)=>{
+        IOLayer.Mouse.mouseDownHandler(e,UILayer);
+    },false);
 
-    var counter = 180;
-    var activecounter = 10;
+    GLOBAL.canvas.addEventListener('mousemove',(e)=>{
+        IOLayer.Mouse.mouseMoveHandler(e);
+    },false);
+
+    window.addEventListener('mouseup', ()=>{
+        IOLayer.Mouse.mouseUpHandler();
+    },false);
+
+
 
     main();
 
     function main(){
         requestAnimationFrame(main);
-        UpdateLogic();
+        IOLayer.process(UILayer,InteractLayer,ShapesLayer,BackGroundLayer);
+
         BackGroundLayer.process();
         ShapesLayer.process();
         InteractLayer.process();
         UILayer.process();
-    }
-
-    function UpdateLogic(){
-        if(counter === 0){
-            BackGroundLayer.switchBackGround();
-            counter = 180;
-        }else{
-            counter--;
-        }
-
-        if(activecounter === 0){
-            ShapesLayer.active();
-            activecounter = Math.ceil(Math.random() * GLOBAL.FPS);
-        }else{
-             activecounter--;
-        }
     }
 
 },false);

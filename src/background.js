@@ -1,5 +1,5 @@
 class BACKGROUNDMODULE {
-    constructor(canvas, ctx, FPS){
+    constructor(GLOBAL){
         /* const value */
         const COLORPOOL = [
             "#8EE5EE","#40E0D0","#1E90FF","#FFC1C1",
@@ -48,11 +48,11 @@ class BACKGROUNDMODULE {
             }
 
             getX(){
-                return Math.round((this.#x / 100) * canvas.width);
+                return Math.round((this.#x / 100) * GLOBAL.canvas.width);
             }
 
             getY(){
-                return Math.round((this.#y / 100) * canvas.height);
+                return Math.round((this.#y / 100) * GLOBAL.canvas.height);
             }
         }
 
@@ -106,11 +106,11 @@ class BACKGROUNDMODULE {
                             this.#points.push(new point(100,0,0,0));
                             this.#points.push(new point(0, 0, 0, 0));
 
-                            let maxVy = Math.ceil(maxDistance / FPS);
+                            let maxVy = Math.ceil(maxDistance / GLOBAL.FPS);
                             let vx = 0;
                             let vy;
                             randomPoints.forEach((e)=>{
-                                vy = randomInRange(Math.ceil((e.distance) / FPS), maxVy + 1);
+                                vy = randomInRange(Math.ceil((e.distance) / GLOBAL.FPS), maxVy + 1);
                                 this.#points.push(new point(e.x,e.y,vx,vy));
                             });
 
@@ -135,11 +135,11 @@ class BACKGROUNDMODULE {
                             this.#points.push(new point(0, 100, 0, 0));
                             this.#points.push(new point(100, 100, 0, 0));
 
-                            let maxVy = Math.ceil(maxDistance / FPS);
+                            let maxVy = Math.ceil(maxDistance / GLOBAL.FPS);
                             let vx = 0;
                             let vy;
                             randomPoints.forEach((e)=>{
-                                vy = randomInRange(Math.ceil((e.distance) / FPS),maxVy + 1);
+                                vy = randomInRange(Math.ceil((e.distance) / GLOBAL.FPS),maxVy + 1);
                                 this.#points.push(new point(e.x,e.y,vx,(-vy)));
                             });
 
@@ -164,11 +164,11 @@ class BACKGROUNDMODULE {
                             this.#points.push(new point(0,0,0,0));
                             this.#points.push(new point(0,100,0,0));
 
-                            let maxVx = Math.ceil(maxDistance / FPS);
+                            let maxVx = Math.ceil(maxDistance / GLOBAL.FPS);
                             let vy = 0;
                             let vx;
                             randomPoints.forEach((e)=>{
-                                vx = randomInRange(Math.ceil((e.distance) / FPS),maxVx + 1);
+                                vx = randomInRange(Math.ceil((e.distance) / GLOBAL.FPS),maxVx + 1);
                                 this.#points.push(new point(e.x,e.y,vx,vy));
                             });
 
@@ -193,11 +193,11 @@ class BACKGROUNDMODULE {
                             this.#points.push(new point(100,100,0,0));
                             this.#points.push(new point(100,0,0,0));
 
-                            let maxVx = Math.ceil(maxDistance / FPS);
+                            let maxVx = Math.ceil(maxDistance / GLOBAL.FPS);
                             let vy = 0;
                             let vx;
                             randomPoints.forEach((e)=>{
-                                vx = randomInRange(Math.ceil((e.distance) / FPS),maxVx + 1);
+                                vx = randomInRange(Math.ceil((e.distance) / GLOBAL.FPS),maxVx + 1);
                                 this.#points.push(new point(e.x,e.y,(-vx),vy));
                             });
 
@@ -222,29 +222,29 @@ class BACKGROUNDMODULE {
 
             /* Private Method */
             #render(){
-                ctx.save();
-                ctx.fillStyle = this.#color;  
+                GLOBAL.renderContext.save();
+                GLOBAL.renderContext.fillStyle = this.#color;  
                 if(this.#freeze){
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    GLOBAL.renderContext.fillRect(0, 0, GLOBAL.canvas.width, GLOBAL.canvas.height);
                 } else {
-                    ctx.beginPath();
-                    ctx.moveTo(this.#points[0].getX(), this.#points[0].getY());
+                    GLOBAL.renderContext.beginPath();
+                    GLOBAL.renderContext.moveTo(this.#points[0].getX(), this.#points[0].getY());
                     if(this.#line === "straight"){
                         for(let i = 1;i < this.#points.length;i++){
-                            ctx.lineTo(this.#points[i].getX(), this.#points[i].getY());
+                            GLOBAL.renderContext.lineTo(this.#points[i].getX(), this.#points[i].getY());
                         }
                     } else if(this.#line === "curve"){
-                        ctx.lineTo(this.#points[1].getX(),this.#points[1].getY());
-                        ctx.lineTo(this.#points[2].getX(),this.#points[2].getY());
-                        ctx.bezierCurveTo(
+                        GLOBAL.renderContext.lineTo(this.#points[1].getX(),this.#points[1].getY());
+                        GLOBAL.renderContext.lineTo(this.#points[2].getX(),this.#points[2].getY());
+                        GLOBAL.renderContext.bezierCurveTo(
                             this.#points[3].getX(), this.#points[3].getY(),
                             this.#points[4].getX(), this.#points[4].getY(),
                             this.#points[5].getX(), this.#points[5].getY()
                         );
                     }
-                    ctx.fill();
+                    GLOBAL.renderContext.fill();
                 }
-                ctx.restore();
+                GLOBAL.renderContext.restore();
             }
         }
 
@@ -270,7 +270,7 @@ class BACKGROUNDMODULE {
 
             /* Public Method */
             process(){
-                ctx.clearRect(0,0,canvas.width,canvas.height);
+                GLOBAL.renderContext.clearRect(0,0,GLOBAL.canvas.width,GLOBAL.canvas.height);
 
                 if(this.#switchBackGround && this.#finishSwitching){
                     let oldColor = this.#backGrounds[this.#currentBackGround].getColor();
@@ -300,8 +300,8 @@ class BACKGROUNDMODULE {
             }
 
             windowResizeHandler(){
-                canvas.height = window.innerHeight;
-                canvas.width = window.innerWidth;
+                GLOBAL.canvas.height = window.innerHeight;
+                GLOBAL.canvas.width = window.innerWidth;
             }
 
             /* Private Method */

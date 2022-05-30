@@ -1,5 +1,5 @@
 class UIMODULE {
-    constructor(canvas, ctx, feedBackOn, backTrackOn){
+    constructor(GLOBAL){
         class PageElement {
             render;
             constructor(rendermethod) {
@@ -41,8 +41,8 @@ class UIMODULE {
     
             resizeHandler() {
                 this.#messageContainer.resizeBox(
-                    (canvas.width - this.#messageContainer.width) / 2,
-                    (canvas.height - this.#messageContainer.height) / 2,
+                    (GLOBAL.canvas.width - this.#messageContainer.width) / 2,
+                    (GLOBAL.canvas.height - this.#messageContainer.height) / 2,
                     this.#messageContainer.width,
                     this.#messageContainer.height
                 );
@@ -63,8 +63,8 @@ class UIMODULE {
                 let containerRows = 5;
         
                 this.#messageContainer = new InteractElemnt(
-                    (canvas.width - containerWidth) / 2,
-                    (canvas.height - containerHeight) / 2,
+                    (GLOBAL.canvas.width - containerWidth) / 2,
+                    (GLOBAL.canvas.height - containerHeight) / 2,
                     containerWidth,
                     containerHeight,
                     () => {}
@@ -72,17 +72,17 @@ class UIMODULE {
         
                 this.#APPname = new PageElement(
                     (msgc) => {
-                        ctx.save();
-                        ctx.font = 'bold 2em "Courier New"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        ctx.fillText(
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.font = 'bold 2em "Courier New"';
+                        GLOBAL.renderContext.textAlign = 'center';
+                        GLOBAL.renderContext.textBaseline = 'top';
+                        GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,0.8)';
+                        GLOBAL.renderContext.fillText(
                             "MyTap",
                             msgc.x + msgc.width / 2,
                             msgc.y + (msgc.height / containerRows) * 1
                         );
-                        ctx.restore();
+                        GLOBAL.renderContext.restore();
                     }
                 );
         
@@ -96,33 +96,33 @@ class UIMODULE {
                     startButtonWidth,
                     startButtonHeight,
                     (msgc) => {
-                        ctx.save();
-                        ctx.font = 'bold 1.6em "Courier New"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        ctx.fillText(
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.font = 'bold 1.6em "Courier New"';
+                        GLOBAL.renderContext.textAlign = 'center';
+                        GLOBAL.renderContext.textBaseline = 'top';
+                        GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,0.8)';
+                        GLOBAL.renderContext.fillText(
                             "start",
                             msgc.x + msgc.width / 2,
                             msgc.y + (msgc.height / containerRows) * 2
                         );
-                        ctx.restore();
+                        GLOBAL.renderContext.restore();
                     }
                 );
         
                 this.#footNote = new PageElement(
                     (msgc) => {
-                        ctx.save();
-                        ctx.font = 'bold 1.0em "Courier New"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        ctx.fillText(
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.font = 'bold 1.0em "Courier New"';
+                        GLOBAL.renderContext.textAlign = 'center';
+                        GLOBAL.renderContext.textBaseline = 'top';
+                        GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,0.8)';
+                        GLOBAL.renderContext.fillText(
                             "Inspired by MikuTap",
                             msgc.x + msgc.width / 2,
                             msgc.y + (msgc.height / containerRows) * 3
                         );
-                        ctx.restore();
+                        GLOBAL.renderContext.restore();
                     }
                 )
             }
@@ -153,8 +153,8 @@ class UIMODULE {
     
             resizeHandler(){
                 this.#messageContainer.resizeBox(
-                    (canvas.width - this.#messageContainer.width) / 2,
-                    (canvas.height - this.#messageContainer.height) / 2,
+                    (GLOBAL.canvas.width - this.#messageContainer.width) / 2,
+                    (GLOBAL.canvas.height - this.#messageContainer.height) / 2,
                     this.#messageContainer.width,
                     this.#messageContainer.height
                 );
@@ -193,22 +193,22 @@ class UIMODULE {
                     goBackButtonBox.width,
                     goBackButtonBox.height,
                     () => {
-                        ctx.save();
-                        ctx.strokeStyle = "rgba(255,255,255,0.8)";
-                        ctx.lineWidth = 2;
-                        ctx.lineJoin = "round";
-                        ctx.beginPath();
-                        ctx.moveTo(goBackButtonBox.x + goBackButtonBox.width, goBackButtonBox.y);
-                        ctx.lineTo(goBackButtonBox.x, goBackButtonBox.y + (goBackButtonBox.height / 2));
-                        ctx.lineTo(goBackButtonBox.x + goBackButtonBox.width, goBackButtonBox.y + goBackButtonBox.height);
-                        ctx.stroke();
-                        ctx.restore();
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.strokeStyle = "rgba(255,255,255,1)";
+                        GLOBAL.renderContext.lineWidth = 2;
+                        GLOBAL.renderContext.lineJoin = "round";
+                        GLOBAL.renderContext.beginPath();
+                        GLOBAL.renderContext.moveTo(goBackButtonBox.x + goBackButtonBox.width, goBackButtonBox.y);
+                        GLOBAL.renderContext.lineTo(goBackButtonBox.x, goBackButtonBox.y + (goBackButtonBox.height / 2));
+                        GLOBAL.renderContext.lineTo(goBackButtonBox.x + goBackButtonBox.width, goBackButtonBox.y + goBackButtonBox.height);
+                        GLOBAL.renderContext.stroke();
+                        GLOBAL.renderContext.restore();
                     }
                 );
     
                 this.#messageContainer = new InteractElemnt(
-                    (canvas.width - containerWidth) / 2,
-                    (canvas.height - containerHeight) / 2,
+                    (GLOBAL.canvas.width - containerWidth) / 2,
+                    (GLOBAL.canvas.height - containerHeight) / 2,
                     containerWidth,
                     containerHeight,
                     () => {}
@@ -216,17 +216,17 @@ class UIMODULE {
     
                 this.#usageMessage = new PageElement(
                     (msgc) => {
-                        ctx.save();
-                        ctx.font = '1.2em "Courier New"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        ctx.fillText(
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.font = '1.2em "Courier New"';
+                        GLOBAL.renderContext.textAlign = 'center';
+                        GLOBAL.renderContext.textBaseline = 'top';
+                        GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,1)';
+                        GLOBAL.renderContext.fillText(
                             "CLICK & DRAG or PRESS ANY KEY!",
                             msgc.x + msgc.width / 2,
                             msgc.y + (msgc.height / containerRows) * 1
                         );
-                        ctx.restore();
+                        GLOBAL.renderContext.restore();
                     }
                 )
     
@@ -240,20 +240,20 @@ class UIMODULE {
                     feedBackButtonWidth,
                     feedBackButtonHeight,
                     (msgc) => {
-                        ctx.save();
-                        ctx.font = '1.2em "Courier New"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        let text = (feedBackOn) ? 
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.font = '1.2em "Courier New"';
+                        GLOBAL.renderContext.textAlign = 'center';
+                        GLOBAL.renderContext.textBaseline = 'top';
+                        GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,1)';
+                        let text = (GLOBAL.feedBackOn) ? 
                             "FEEDBACK: ON" :
                             "FEEDBACK: OFF";
-                        ctx.fillText(
+                        GLOBAL.renderContext.fillText(
                             text,
                             msgc.x + msgc.width / 2,
                             msgc.y + (msgc.height / containerRows) * 3
                         );
-                        ctx.restore();
+                        GLOBAL.renderContext.restore();
                     }
                 );
     
@@ -267,20 +267,20 @@ class UIMODULE {
                     backTrackButtonWidth,
                     backTrackButtonHeight,
                     (msgc) => {
-                        ctx.save();
-                        ctx.font = '1.2em "Courier New"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        let text = (backTrackOn) ? 
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.font = '1.2em "Courier New"';
+                        GLOBAL.renderContext.textAlign = 'center';
+                        GLOBAL.renderContext.textBaseline = 'top';
+                        GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,1)';
+                        let text = (GLOBAL.backTrackOn) ? 
                             "BACKTRACK: ON" :
                             "BACKTRACK: OFF";
-                        ctx.fillText(
+                        GLOBAL.renderContext.fillText(
                             text,
                             msgc.x + msgc.width / 2,
                             msgc.y + (msgc.height / containerRows) * 4
                         );
-                        ctx.restore();
+                        GLOBAL.renderContext.restore();
                     }
                 )
             }

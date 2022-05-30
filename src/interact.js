@@ -1,5 +1,5 @@
 class INTERACTMODULE {
-    constructor(canvas, ctx, FPS){
+    constructor(GLOBAL){
         class Block {
             /* Public Property */
             /* Private Property */
@@ -17,7 +17,7 @@ class INTERACTMODULE {
             }
     
             active(){
-                this.#counter = FPS;
+                this.#counter = GLOBAL.FPS;
             }
     
             isActive(){
@@ -26,11 +26,11 @@ class INTERACTMODULE {
     
             render(){
                 if(this.#counter !== 0){
-                    let opacity = Math.pow((this.#counter / FPS),3) * 0.8;
-                    ctx.save();
-                    ctx.fillStyle = 'rgba(255,255,255,' + opacity + ')';
-                    ctx.fillRect(this.#x,this.#y,this.#width,this.#height);
-                    ctx.restore();
+                    let opacity = Math.pow((this.#counter / GLOBAL.FPS),3) * 0.8;
+                    GLOBAL.renderContext.save();
+                    GLOBAL.renderContext.fillStyle = 'rgba(255,255,255,' + opacity + ')';
+                    GLOBAL.renderContext.fillRect(this.#x,this.#y,this.#width,this.#height);
+                    GLOBAL.renderContext.restore();
                     this.#counter -= 1;
                 }
             }
@@ -47,10 +47,10 @@ class INTERACTMODULE {
             constructor(){
                 this.#numberOfColumn = 8;
                 this.#numberOfRow = 4;
-                let blockWidth = canvas.width / this.#numberOfColumn;
-                let blockHeight = canvas.height / this.#numberOfRow;
-                for(let y = 0;y < canvas.height;y += blockHeight){
-                    for(let x = 0;x < canvas.width;x += blockWidth){
+                let blockWidth = GLOBAL.canvas.width / this.#numberOfColumn;
+                let blockHeight = GLOBAL.canvas.height / this.#numberOfRow;
+                for(let y = 0;y < GLOBAL.canvas.height;y += blockHeight){
+                    for(let x = 0;x < GLOBAL.canvas.width;x += blockWidth){
                         this.#blocks.push(new Block(x, y, blockWidth, blockHeight));
                     }
                 }
@@ -58,11 +58,11 @@ class INTERACTMODULE {
             }
             /* Public Method */
             windowResizeHandler(){
-                let blockWidth = canvas.width / this.#numberOfColumn;
-                let blockHeight = canvas.height / this.#numberOfRow;
+                let blockWidth = GLOBAL.canvas.width / this.#numberOfColumn;
+                let blockHeight = GLOBAL.canvas.height / this.#numberOfRow;
                 let i = 0;
-                for(let y = 0;y < canvas.height;y += blockHeight){
-                    for(let x = 0;x < canvas.width;x += blockWidth){
+                for(let y = 0;y < GLOBAL.canvas.height;y += blockHeight){
+                    for(let x = 0;x < GLOBAL.canvas.width;x += blockWidth){
                         this.#blocks[i].resizeBlock(x, y, blockWidth, blockHeight);
                         i++;
                     }

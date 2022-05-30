@@ -1,5 +1,5 @@
 class SHAPEMODULE {
-    constructor(canvas, ctx, FPS) {
+    constructor(GLOBAL) {
         /* const value */
         const DIRECTION = [
             'l2r', 'r2l', 'u2d', 'd2u'
@@ -89,22 +89,22 @@ class SHAPEMODULE {
                     constructor() {
                         super();
 
-                        this.#counter = FPS;
-                        this.#cx = Math.round((randomInRange(10,91) / 100) * canvas.width);
-                        this.#cy = Math.round((randomInRange(10,91) / 100) * canvas.height);
-                        this.#rmax = Math.round((randomInRange(5,11) / 100) * Math.min(canvas.width, canvas.height));
+                        this.#counter = GLOBAL.FPS;
+                        this.#cx = Math.round((randomInRange(10,91) / 100) * GLOBAL.canvas.width);
+                        this.#cy = Math.round((randomInRange(10,91) / 100) * GLOBAL.canvas.height);
+                        this.#rmax = Math.round((randomInRange(1,6) / 100) * Math.min(GLOBAL.canvas.width, GLOBAL.canvas.height));
                         this.#r = randomInRange(0,this.#rmax);
                         this.#color = randomColor(1);
-                        this.#spanvr = Math.ceil((this.#rmax - this.#r) / (FPS / 4));
-                        this.#shrinkvr = Math.ceil((this.#rmax) / (FPS / 4));
+                        this.#spanvr = Math.ceil((this.#rmax - this.#r) / (GLOBAL.FPS / 4));
+                        this.#shrinkvr = Math.ceil((this.#rmax) / (GLOBAL.FPS / 4));
                     }
 
                     process() {
                         if(this.#counter > 0) {
-                            if(this.#counter >= ((FPS * 3) / 4)) {
+                            if(this.#counter >= ((GLOBAL.FPS * 3) / 4)) {
                                 this.#r += this.#spanvr;
                                 this.#r = (this.#r > this.#rmax) ? this.#rmax : this.#r;
-                            } else if(this.#counter <= ((FPS) / 4)) {
+                            } else if(this.#counter <= ((GLOBAL.FPS) / 4)) {
                                 this.#r -= this.#shrinkvr;
                                 this.#r = (this.#r < 0) ? 0 : this.#r;
                             }
@@ -115,12 +115,12 @@ class SHAPEMODULE {
                     isFinish() { return (this.#counter === 0); }
 
                     render() {
-                        ctx.save();
-                        ctx.fillStyle = this.#color;
-                        ctx.beginPath();
-                        ctx.arc(this.#cx,this.#cy,this.#r,0,Math.PI * 2,true);
-                        ctx.fill();
-                        ctx.restore();
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.fillStyle = this.#color;
+                        GLOBAL.renderContext.beginPath();
+                        GLOBAL.renderContext.arc(this.#cx,this.#cy,this.#r,0,Math.PI * 2,true);
+                        GLOBAL.renderContext.fill();
+                        GLOBAL.renderContext.restore();
                     }
                 }
             }
@@ -141,17 +141,17 @@ class SHAPEMODULE {
                     constructor() {
                         super();
                         
-                        this.#counter = FPS;
-                        this.#cx = Math.round(canvas.width / 2);
-                        this.#cy = Math.round(canvas.height / 2);
-                        this.#r = Math.round((randomInRange(10,36) / 100) * Math.min(canvas.width,canvas.height));
+                        this.#counter = GLOBAL.FPS;
+                        this.#cx = Math.round(GLOBAL.canvas.width / 2);
+                        this.#cy = Math.round(GLOBAL.canvas.height / 2);
+                        this.#r = Math.round((randomInRange(10,36) / 100) * Math.min(GLOBAL.canvas.width,GLOBAL.canvas.height));
 
-                        this.#color = randomColor(1);
+                        this.#color = randomColor(0.6);
                         this.#anticlockwise = (randomInRange(0,2) === 0);
 
                         this.#initAngle = randomInRange(0,360) * (Math.PI / 180);
                         this.#curAngle = randomInRange(0,360);
-                        this.#v = ((360 - this.#curAngle) / (FPS/2)) * (Math.PI / 180);
+                        this.#v = ((360 - this.#curAngle) / (GLOBAL.FPS/2)) * (Math.PI / 180);
                         this.#curAngle = this.#curAngle * (Math.PI / 180);
                     }
 
@@ -169,18 +169,18 @@ class SHAPEMODULE {
                     isFinish() { return (this.#counter === 0); }
 
                     render() {
-                        ctx.save();
-                        ctx.fillStyle = this.#color;
-                        ctx.beginPath();
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.fillStyle = this.#color;
+                        GLOBAL.renderContext.beginPath();
                         if(this.#curAngle === 2 * Math.PI) {
-                            ctx.arc(this.#cx,this.#cy,this.#r,0,this.#curAngle,true);
+                            GLOBAL.renderContext.arc(this.#cx,this.#cy,this.#r,0,this.#curAngle,true);
                         } else {
                             let endAngle = (this.#anticlockwise) ? (this.#initAngle - this.#curAngle) : (this.#initAngle + this.#curAngle);
-                            ctx.arc(this.#cx, this.#cy, this.#r, this.#initAngle, endAngle, this.#anticlockwise);
-                            ctx.lineTo(this.#cx,this.#cy);
+                            GLOBAL.renderContext.arc(this.#cx, this.#cy, this.#r, this.#initAngle, endAngle, this.#anticlockwise);
+                            GLOBAL.renderContext.lineTo(this.#cx,this.#cy);
                         }
-                        ctx.fill();
-                        ctx.restore();
+                        GLOBAL.renderContext.fill();
+                        GLOBAL.renderContext.restore();
                     }
                 }
             }
@@ -192,9 +192,9 @@ class SHAPEMODULE {
                 this.defineElementaryAnimation();
 
                 /* Generate Animation */
-                let containerSize = Math.round((randomInRange(20,61) / 100) * Math.min(canvas.height,canvas.width));
-                let containerX = Math.round((canvas.width - containerSize) / 2);
-                let containerY = Math.round((canvas.height - containerSize) / 2);
+                let containerSize = Math.round((randomInRange(20,61) / 100) * Math.min(GLOBAL.canvas.height,GLOBAL.canvas.width));
+                let containerX = Math.round((GLOBAL.canvas.width - containerSize) / 2);
+                let containerY = Math.round((GLOBAL.canvas.height - containerSize) / 2);
 
                 let dir = DIRECTION[randomInRange(0,DIRECTION.length)];
                 let color = randomColor(1);
@@ -245,11 +245,11 @@ class SHAPEMODULE {
                     constructor(x,y,maxWidth,maxHeight,direction,color){
                         super();
 
-                        this.#counter = FPS;
+                        this.#counter = GLOBAL.FPS;
                         this.#maxWidth = maxWidth; this.#maxHeight = maxHeight;
                         this.#direction = direction; this.#color = color;
 
-                        /* Math.ceil(100 / (FPS / 2)) = 4*/
+                        /* Math.ceil(100 / (GLOBAL.FPS / 2)) = 4*/
                         this.#v = randomInRange(4, 11);
                         switch(this.#direction) {
                             case 'l2r' : {
@@ -279,28 +279,28 @@ class SHAPEMODULE {
                         if(this.#counter > 0){
                             switch(this.#direction){
                                 case 'l2r' : {
-                                    if(this.#counter > (FPS / 2)) {
+                                    if(this.#counter > (GLOBAL.FPS / 2)) {
                                         this.#rx = setInRange(this.#rx + this.#v, this.#rx, this.#lx + this.#maxWidth);
                                     } else {
                                         this.#lx = setInRange(this.#lx + this.#v, this.#lx, this.#rx);
                                     }
                                 } break;
                                 case 'r2l' : {
-                                    if(this.#counter > (FPS / 2)) {
+                                    if(this.#counter > (GLOBAL.FPS / 2)) {
                                         this.#lx = setInRange(this.#lx - this.#v, this.#rx - this.#maxWidth, this.#lx);
                                     } else {
                                         this.#rx = setInRange(this.#rx - this.#v, this.#lx, this.#rx);
                                     }
                                 } break;
                                 case 'u2d' : {
-                                    if(this.#counter > (FPS / 2)) {
+                                    if(this.#counter > (GLOBAL.FPS / 2)) {
                                         this.#dy = setInRange(this.#dy + this.#v, this.#dy, this.#uy + this.#maxHeight);
                                     } else {
                                         this.#uy = setInRange(this.#uy + this.#v, this.#uy, this.#dy);
                                     }
                                 } break;
                                 case 'd2u' : {
-                                    if(this.#counter > (FPS / 2)) {
+                                    if(this.#counter > (GLOBAL.FPS / 2)) {
                                         this.#uy = setInRange(this.#uy - this.#v, this.#dy - this.#maxHeight, this.#uy);
                                     } else {
                                         this.#dy = setInRange(this.#dy - this.#v, this.#uy, this.#dy);
@@ -315,15 +315,15 @@ class SHAPEMODULE {
                     isFinish() { return (this.#counter === 0);}
 
                     render() {
-                        ctx.save();
-                        ctx.fillStyle = this.#color;
-                        ctx.beginPath()
-                        ctx.moveTo(this.#lx,this.#uy);
-                        ctx.lineTo(this.#rx,this.#uy);
-                        ctx.lineTo(this.#rx,this.#dy);
-                        ctx.lineTo(this.#lx,this.#dy);
-                        ctx.fill();
-                        ctx.restore();
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.fillStyle = this.#color;
+                        GLOBAL.renderContext.beginPath()
+                        GLOBAL.renderContext.moveTo(this.#lx,this.#uy);
+                        GLOBAL.renderContext.lineTo(this.#rx,this.#uy);
+                        GLOBAL.renderContext.lineTo(this.#rx,this.#dy);
+                        GLOBAL.renderContext.lineTo(this.#lx,this.#dy);
+                        GLOBAL.renderContext.fill();
+                        GLOBAL.renderContext.restore();
                     }
                 }
             }
@@ -344,19 +344,19 @@ class SHAPEMODULE {
                     constructor() {
                         super();
 
-                        this.#counter = FPS;
-                        this.#cx = canvas.width / 2;
-                        this.#cy = canvas.height / 2;
+                        this.#counter = GLOBAL.FPS;
+                        this.#cx = GLOBAL.canvas.width / 2;
+                        this.#cy = GLOBAL.canvas.height / 2;
 
                         this.#color = randomColor(0.6);
                         this.#lineWidth = randomInRange(10,26);
 
-                        this.#curSize = Math.round((randomInRange(1,21) / 100) * Math.min(canvas.width, canvas.height));
-                        this.#maxSize = Math.round((randomInRange(60,121) / 100) * Math.min(canvas.width, canvas.height));
-                        this.#sizeSpeed = Math.round((this.#maxSize - this.#curSize) / FPS);
+                        this.#curSize = Math.round((randomInRange(1,21) / 100) * Math.min(GLOBAL.canvas.width, GLOBAL.canvas.height));
+                        this.#maxSize = Math.round((randomInRange(60,121) / 100) * Math.min(GLOBAL.canvas.width, GLOBAL.canvas.height));
+                        this.#sizeSpeed = Math.round((this.#maxSize - this.#curSize) / GLOBAL.FPS);
 
                         this.#curAngle = 0;
-                        this.#angleSpeed = (randomInRange(1,9) * Math.PI / 2) / FPS;
+                        this.#angleSpeed = (randomInRange(1,9) * Math.PI / 2) / GLOBAL.FPS;
                         this.#clockWise = (randomInRange(0,2) === 0);
                     }
 
@@ -372,20 +372,20 @@ class SHAPEMODULE {
                     isFinish() { return (this.#counter === 0);}
 
                     render() {
-                        ctx.save();
-                        ctx.strokeStyle = this.#color;
-                        ctx.lineWidth = this.#lineWidth;
-                        ctx.translate(this.#cx,this.#cy);
-                        ctx.rotate(this.#curAngle);
-                        ctx.beginPath();
+                        GLOBAL.renderContext.save();
+                        GLOBAL.renderContext.strokeStyle = this.#color;
+                        GLOBAL.renderContext.lineWidth = this.#lineWidth;
+                        GLOBAL.renderContext.translate(this.#cx,this.#cy);
+                        GLOBAL.renderContext.rotate(this.#curAngle);
+                        GLOBAL.renderContext.beginPath();
                         let t = this.#curSize / 2;
-                        ctx.moveTo(-t,t);
-                        ctx.lineTo(t,t);
-                        ctx.lineTo(t,-t);
-                        ctx.lineTo(-t,-t);
-                        ctx.closePath();
-                        ctx.stroke();
-                        ctx.restore();
+                        GLOBAL.renderContext.moveTo(-t,t);
+                        GLOBAL.renderContext.lineTo(t,t);
+                        GLOBAL.renderContext.lineTo(t,-t);
+                        GLOBAL.renderContext.lineTo(-t,-t);
+                        GLOBAL.renderContext.closePath();
+                        GLOBAL.renderContext.stroke();
+                        GLOBAL.renderContext.restore();
                     }
                 }
             }
@@ -400,8 +400,8 @@ class SHAPEMODULE {
                 this.#shapeAnimation.push(new AnimationInterface(SpinSquare));
             }
 
-            active(){
-                let s = randomInRange(0,this.#shapeAnimation.length);
+            active(id){
+                let s = id % this.#shapeAnimation.length;
                 this.#shapeAnimation[s].active();
             }
 
