@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded',function(){
     
     const GLOBAL = new GLOBALMODULE(true);
+    const ASSETS = new ASSETSMODULE();
     const loadBACKGROUNDMODULE = new BACKGROUNDMODULE(GLOBAL);
     const loadSHAPEMODULE = new SHAPEMODULE(GLOBAL);
     const loadINTERACTMODULE = new INTERACTMODULE(GLOBAL);
     const loadUIMODULE = new UIMODULE(GLOBAL);
-    const loadAUDIOMODULE = new AUDIOMODULE(GLOBAL);
+    const loadAUDIOMODULE = new AUDIOMODULE(GLOBAL, ASSETS);
     const loadIOMODULE = new IOMODULE(GLOBAL);
     
             
